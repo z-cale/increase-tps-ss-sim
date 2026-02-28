@@ -26,7 +26,7 @@ export interface PresetConfig {
   customBlockSizeMB: number;
 }
 
-export const BLOCK_SIZE_OPTIONS = [1.5, 1.8, 1.9, 2] as const;
+export const BLOCK_SIZE_OPTIONS = [2, 1.9, 1.75, 1.5] as const;
 export const BLOCK_INTERVAL_OPTIONS = [20, 25, 27.5, 30, 35, 37.5] as const;
 
 export const PRESET_TODAY: PresetConfig = {
