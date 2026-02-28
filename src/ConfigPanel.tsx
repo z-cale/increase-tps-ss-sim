@@ -9,7 +9,7 @@ interface ConfigPanelProps {
 }
 
 export function ConfigPanel({ label, color, config, onChange }: ConfigPanelProps) {
-  const toggle = (key: "removeIVKSync" | "lowerSaplingBandwidth") => {
+  const toggle = (key: "removeIVKSync" | "lowerSaplingBandwidth" | "zip231MemoBundles") => {
     onChange({ ...config, [key]: !config[key] });
   };
 
@@ -55,6 +55,15 @@ export function ConfigPanel({ label, color, config, onChange }: ConfigPanelProps
             onChange={() => toggle("lowerSaplingBandwidth")}
           />
           Lower Sapling bandwidth by 70%
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={config.zip231MemoBundles}
+            onChange={() => toggle("zip231MemoBundles")}
+          />
+          ZIP-231 memo bundles
         </label>
 
         <div className="block-size-control">

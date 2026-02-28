@@ -20,6 +20,8 @@ export interface PresetConfig {
   /** Custom block interval in seconds */
   customBlockIntervalS: number;
   lowerSaplingBandwidth: boolean;
+  /** ZIP-231 memo bundle */
+  zip231MemoBundles: boolean;
   /** Whether to use a custom block size (MB) instead of the default ~2MB */
   useCustomBlockSize: boolean;
   /** Custom block size in MB (only used when useCustomBlockSize is true) */
@@ -37,6 +39,7 @@ export const PRESET_TODAY: PresetConfig = {
   useCustomBlockInterval: false,
   customBlockIntervalS: 25,
   lowerSaplingBandwidth: false,
+  zip231MemoBundles: false,
   useCustomBlockSize: false,
   customBlockSizeMB: 2,
 };

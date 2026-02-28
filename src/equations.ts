@@ -77,6 +77,19 @@ const ORCHARD_ACTIONS_PER_SANDBLAST_TX = 32;
 const ORCHARD_BANDWIDTH_PER_ACTION = 148;
 
 // ─────────────────────────────────────────────────────────
+// ZIP-231 MEMO BUNDLE ADJUSTMENTS
+// ─────────────────────────────────────────────────────────
+
+/** ZIP-231: bandwidth per action increases by 48 bytes */
+const ZIP231_BANDWIDTH_PER_ACTION_DELTA = 48;
+
+/** ZIP-231: flat tx overhead increases by 512 bytes */
+const ZIP231_FLAT_DELTA = 512;
+
+/** ZIP-231: per-action size decreases by (512 - 48) bytes */
+const ZIP231_PER_ACTION_DELTA = -(512 - 48);
+
+// ─────────────────────────────────────────────────────────
 // SHARED COMPUTATIONS
 // ─────────────────────────────────────────────────────────
 
@@ -121,8 +134,10 @@ export function computeShared(config: PresetConfig): SharedResult {
   }
 
   // ── Orchard TPS (2-action normal tx) ────────────────
+  const zip231 = config.zip231MemoBundles;
   const orchardNormalTxSize =
-    2 * ORCHARD_PER_ACTION_SIZE + ORCHARD_FLAT_SIZE;
+    2 * (ORCHARD_PER_ACTION_SIZE + (zip231 ? ZIP231_PER_ACTION_DELTA : 0)) +
+    (ORCHARD_FLAT_SIZE + (zip231 ? ZIP231_FLAT_DELTA : 0));
   const orchardTxsPerBlock = Math.floor(ebs / orchardNormalTxSize);
   const orchardTps = orchardTxsPerBlock / blockTime;
 
@@ -156,9 +171,10 @@ export interface SaplingResult {
 
 export function computeSapling(config: PresetConfig, shared: SharedResult): SaplingResult {
   // ── Effective block size ──────────────────────────────
+  // Sapling always uses default 2MB block size (custom block size is orchard-only)
   const saplingEffectiveBlockSize = config.lowerSaplingBandwidth
     ? 600_000
-    : shared.effectiveBlockSize;
+    : DEFAULT_EFFECTIVE_BLOCK_SIZE;
 
   // ── Spam transaction sizing ──────────────────────────
   // Worst-case tx: 1 spend + 32 outputs + flat overhead
@@ -201,6 +217,7 @@ export function computeSapling(config: PresetConfig, shared: SharedResult): Sapl
 export interface OrchardResult {
   orchardPerActionSize: number;
   orchardFlatSize: number;
+  orchardBandwidthPerAction: number;
   orchardSpamTxSize: number;
   orchardTxsPerBlock: number;
   orchardActionsPerBlock: number;
@@ -213,9 +230,16 @@ export interface OrchardResult {
 }
 
 export function computeOrchard(config: PresetConfig, shared: SharedResult): OrchardResult {
+  // ── ZIP-231 adjustments ────────────────────────────
+  const zip231 = config.zip231MemoBundles;
+  const orchardPerActionSize = ORCHARD_PER_ACTION_SIZE +
+    (zip231 ? ZIP231_PER_ACTION_DELTA : 0);
+  const orchardFlatSize = ORCHARD_FLAT_SIZE +
+    (zip231 ? ZIP231_FLAT_DELTA : 0);
+  const orchardBandwidthPerAction = ORCHARD_BANDWIDTH_PER_ACTION +
+    (zip231 ? ZIP231_BANDWIDTH_PER_ACTION_DELTA : 0);
+
   // ── Spam transaction sizing ──────────────────────────
-  const orchardPerActionSize = ORCHARD_PER_ACTION_SIZE;
-  const orchardFlatSize = ORCHARD_FLAT_SIZE;
   const orchardSpamTxSize =
     ORCHARD_ACTIONS_PER_SANDBLAST_TX * orchardPerActionSize +
     orchardFlatSize;
@@ -230,7 +254,7 @@ export function computeOrchard(config: PresetConfig, shared: SharedResult): Orch
 
   // ── Bandwidth per block ──────────────────────────────
   const bandwidthLoadPerBlock =
-    ORCHARD_BANDWIDTH_PER_ACTION * orchardActionsPerBlock;
+    orchardBandwidthPerAction * orchardActionsPerBlock;
 
   // ── Daily totals (raw, no header) ────────────────────
   const rawBandwidthPerDay = bandwidthLoadPerBlock * shared.numBlocksPerDay;
@@ -239,6 +263,7 @@ export function computeOrchard(config: PresetConfig, shared: SharedResult): Orch
   return {
     orchardPerActionSize,
     orchardFlatSize,
+    orchardBandwidthPerAction,
     orchardSpamTxSize,
     orchardTxsPerBlock,
     orchardActionsPerBlock,

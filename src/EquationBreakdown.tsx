@@ -89,7 +89,7 @@ export function EquationBreakdown({ label, color, shared, sapling, orchard }: Eq
           <h4>Orchard TPS (2-action tx)</h4>
           <div className="eq-line">
             <Var name="orchard_normal_tx_size" value={shared.orchardNormalTxSize} unit="bytes" />{" "}
-            = 2 × ORCHARD_PER_ACTION_SIZE + ORCHARD_FLAT_SIZE
+            = 2 × ORCHARD_PER_ACTION_SIZE + ORCHARD_FLAT_SIZE{shared.orchardNormalTxSize !== 2 * 3156 + 2784 && " (ZIP-231 adjusted)"}
           </div>
           <div className="eq-line">
             <Var name="orchard_tps" value={Math.round(shared.orchardTps * 100) / 100} unit="tx/s" />{" "}
@@ -148,7 +148,7 @@ export function EquationBreakdown({ label, color, shared, sapling, orchard }: Eq
           </div>
           <div className="eq-line">
             <Var name="ORCHARD_PER_ACTION_SIZE" value={orchard.orchardPerActionSize} unit="bytes" />{" "}
-            = SPEND_AUTH_SIG + PER_ACTION_PROOF_SIZE + ACTION_DESC
+            = SPEND_AUTH_SIG + PER_ACTION_PROOF_SIZE + ACTION_DESC{orchard.orchardPerActionSize !== 3156 && " − 464 (ZIP-231)"}
           </div>
           <div className="eq-line">
             <Var name="ORCHARD_BINDING_SIG" value={64} unit="bytes" />,{" "}
@@ -156,10 +156,11 @@ export function EquationBreakdown({ label, color, shared, sapling, orchard }: Eq
           </div>
           <div className="eq-line">
             <Var name="ORCHARD_FLAT_SIZE" value={orchard.orchardFlatSize} unit="bytes" />{" "}
-            = BINDING_SIG + FLAT_PROOF
+            = BINDING_SIG + FLAT_PROOF{orchard.orchardFlatSize !== 2784 && " + 512 (ZIP-231)"}
           </div>
           <div className="eq-line">
-            <Var name="ORCHARD_BANDWIDTH_PER_ACTION" value={148} unit="bytes" />
+            <Var name="ORCHARD_BANDWIDTH_PER_ACTION" value={orchard.orchardBandwidthPerAction} unit="bytes" />{" "}
+            {orchard.orchardBandwidthPerAction !== 148 ? "= 148 + 48 (ZIP-231)" : "= 148"}
           </div>
 
           <h4 className="eq-section-orchard">Orchard Derived</h4>
