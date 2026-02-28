@@ -86,6 +86,16 @@ export function EquationBreakdown({ label, color, shared, sapling, orchard }: Eq
             Both applied after max(sapling, orchard) in final rollup
           </div>
 
+          <h4>Orchard TPS (2-action tx)</h4>
+          <div className="eq-line">
+            <Var name="orchard_normal_tx_size" value={shared.orchardNormalTxSize} unit="bytes" />{" "}
+            = 2 × ORCHARD_PER_ACTION_SIZE + ORCHARD_FLAT_SIZE
+          </div>
+          <div className="eq-line">
+            <Var name="orchard_tps" value={Math.round(shared.orchardTps * 100) / 100} unit="tx/s" />{" "}
+            = floor(effective_block_size / orchard_normal_tx_size) / block_time
+          </div>
+
           {/* ── SAPLING ────────────────────────────────── */}
           <h4 className="eq-section-sapling">Sapling Constants</h4>
           <div className="eq-line">

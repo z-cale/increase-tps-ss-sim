@@ -86,6 +86,10 @@ export interface SharedResult {
   numBlocksPerDay: number;
   compactBlockHeaderBwPerDay: number;
   trialDecryptMultiplier: number;
+  /** Orchard tx size with 2 actions (normal tx) */
+  orchardNormalTxSize: number;
+  /** Max Orchard TPS (2-action txs) */
+  orchardTps: number;
 }
 
 /**
@@ -116,12 +120,20 @@ export function computeShared(config: PresetConfig): SharedResult {
     trialDecryptMultiplier *= 2;
   }
 
+  // ── Orchard TPS (2-action normal tx) ────────────────
+  const orchardNormalTxSize =
+    2 * ORCHARD_PER_ACTION_SIZE + ORCHARD_FLAT_SIZE;
+  const orchardTxsPerBlock = Math.floor(ebs / orchardNormalTxSize);
+  const orchardTps = orchardTxsPerBlock / blockTime;
+
   return {
     effectiveBlockSize: ebs,
     blockTime,
     numBlocksPerDay,
     compactBlockHeaderBwPerDay,
     trialDecryptMultiplier,
+    orchardNormalTxSize,
+    orchardTps,
   };
 }
 

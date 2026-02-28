@@ -118,6 +118,19 @@ function App() {
         />
       </div>
 
+      <div className="tps-row">
+        <div className="tps-card" style={{ borderColor: COLOR_A }}>
+          <span className="tps-label" style={{ color: COLOR_A }}>{configA.label}</span>
+          <span className="tps-value">{sharedA.orchardTps.toFixed(2)}</span>
+          <span className="tps-unit">Orchard TPS</span>
+        </div>
+        <div className="tps-card" style={{ borderColor: COLOR_B }}>
+          <span className="tps-label" style={{ color: COLOR_B }}>{configB.label}</span>
+          <span className="tps-value">{sharedB.orchardTps.toFixed(2)}</span>
+          <span className="tps-unit">Orchard TPS</span>
+        </div>
+      </div>
+
       <div className="charts-row">
         <div className="chart-container">
           <h2>Max Shielded Sync Client Bandwidth / Day (MB)</h2>

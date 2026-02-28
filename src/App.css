@@ -108,6 +108,41 @@ h1 {
   cursor: not-allowed;
 }
 
+/* TPS cards */
+.tps-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tps-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #1e1e2e;
+  border: 2px solid;
+  border-radius: 12px;
+}
+
+.tps-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.tps-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  color: #fff;
+}
+
+.tps-unit {
+  font-size: 0.8rem;
+  color: #888;
+}
+
 /* Charts */
 .charts-row {
   display: flex;
